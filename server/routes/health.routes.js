@@ -1,41 +1,73 @@
-// server/routes/health.routes.js
 import express from "express";
-import HealthLog from "../models/HealthLog.js";
 import auth from "../middleware/auth.js";
+import { HealthLog } from "../models/index.js";
 
 const router = express.Router();
 
-// create log
+/*
+Create health log
+*/
 router.post("/", auth, async (req, res) => {
   try {
     const log = await HealthLog.create({
       ...req.body,
-      user: req.userId // FIX
+      userId: req.userId,
     });
 
     res.json(log);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({
+      message: err.message,
+    });
   }
 });
 
-// get user logs
+/*
+Get user health logs
+*/
 router.get("/", auth, async (req, res) => {
-  const logs = await HealthLog.find({
-    user: req.userId // FIX
-  }).sort({ createdAt: 1 });
+  try {
+    const logs = await HealthLog.findAll({
+      where: {
+        userId: req.userId,
+      },
+      order: [["createdAt", "ASC"]],
+    });
 
-  res.json(logs);
+    res.json(logs);
+  } catch {
+    res.status(500).json({
+      message: "Failed to fetch health logs",
+    });
+  }
 });
 
-// delete log
+/*
+Delete health log
+*/
 router.delete("/:id", auth, async (req, res) => {
-  await HealthLog.findOneAndDelete({
-    _id: req.params.id,
-    user: req.userId // FIX
-  });
+  try {
+    const log = await HealthLog.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.userId,
+      },
+    });
 
-  res.json({ success: true });
+    if (!log) {
+      return res.sendStatus(404);
+    }
+
+    await log.destroy();
+
+    res.json({
+      success: true,
+    });
+  } catch {
+    res.status(400).json({
+      message: "Failed to delete health log",
+    });
+  }
 });
 
 export default router;

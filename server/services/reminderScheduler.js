@@ -13,7 +13,11 @@ export function startReminderScheduler() {
     const now = new Date();
     const currentTime = now.toTimeString().slice(0, 5);
 
-    const medicines = await Medicine.find({ active: true });
+    const medicines = await Medicine.findAll({
+      where: {
+        active: true,
+      },
+    });
 
     medicines.forEach(med => {
       med.dosageTimes.forEach(time => {

@@ -1,33 +1,31 @@
-// server/routes/profile.routes.js
 import express from "express";
 import auth from "../middleware/auth.js";
-import Profile from "../models/Profile.js";
-import User from "../models/User.js";
+import { Profile, User } from "../models/index.js";
 
 const router = express.Router();
 
 /*
-GET Profile
-Returns user info + profile
+Get profile
 */
 router.get("/", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("-password");
+    const user = await User.findByPk(req.userId, {
+      attributes: {
+        exclude: ["password"],
+      },
+    });
 
-    let profile = await Profile.findOne({ user: req.userId });
-
-    if (!profile) {
-      return res.json({
-        user,
-        profile: null,
-      });
-    }
+    const profile = await Profile.findOne({
+      where: {
+        userId: req.userId,
+      },
+    });
 
     res.json({
       user,
-      profile,
+      profile: profile || null,
     });
-  } catch (err) {
+  } catch {
     res.status(500).json({
       message: "Failed to fetch profile",
     });
@@ -40,7 +38,9 @@ Create profile
 router.post("/", auth, async (req, res) => {
   try {
     const exists = await Profile.findOne({
-      user: req.userId,
+      where: {
+        userId: req.userId,
+      },
     });
 
     if (exists) {
@@ -51,7 +51,7 @@ router.post("/", auth, async (req, res) => {
 
     const profile = await Profile.create({
       ...req.body,
-      user: req.userId,
+      userId: req.userId,
     });
 
     res.status(201).json(profile);
@@ -67,22 +67,19 @@ Update profile
 */
 router.put("/", auth, async (req, res) => {
   try {
-    const profile = await Profile.findOneAndUpdate(
-      {
-        user: req.userId,
+    const profile = await Profile.findOne({
+      where: {
+        userId: req.userId,
       },
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    });
 
     if (!profile) {
       return res.status(404).json({
         message: "Profile not found",
       });
     }
+
+    await profile.update(req.body);
 
     res.json(profile);
   } catch (err) {

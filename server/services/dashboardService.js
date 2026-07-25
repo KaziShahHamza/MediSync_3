@@ -1,73 +1,70 @@
-// server/services/dashboardService.js
-import Profile from "../models/Profile.js";
-import HealthLog from "../models/HealthLog.js";
-import Medicine from "../models/Medicine.js";
-import Doctor from "../models/Doctor.js";
-import Prescription from "../models/Prescription.js";
+import {
+  Profile,
+  User,
+  HealthLog,
+  Medicine,
+  Doctor,
+  Prescription,
+} from "../models/index.js";
 
 import generateHealthSummary from "./healthSummaryService.js";
 
-
-
 export async function getDashboardData(userId) {
-
-
   const profile = await Profile.findOne({
-    user: userId,
-  }).populate("user", "name email");
-
-
+    where: {
+      userId,
+    },
+    include: [
+      {
+        model: User,
+        attributes: ["name", "email"],
+      },
+    ],
+  });
 
   const latestBP = await HealthLog.findOne({
-    user: userId,
-    type: "bp",
-  })
-  .sort({ createdAt:-1 });
-
-
+    where: {
+      userId,
+      type: "bp",
+    },
+    order: [["createdAt", "DESC"]],
+  });
 
   const latestDiabetes = await HealthLog.findOne({
-    user:userId,
-    type:"diabetes",
-  })
-  .sort({createdAt:-1});
-
-
+    where: {
+      userId,
+      type: "diabetes",
+    },
+    order: [["createdAt", "DESC"]],
+  });
 
   const latestBMI = await HealthLog.findOne({
-    user:userId,
-    type:"bmi",
-  })
-  .sort({createdAt:-1});
+    where: {
+      userId,
+      type: "bmi",
+    },
+    order: [["createdAt", "DESC"]],
+  });
 
+  const medicineCount = await Medicine.count({
+    where: {
+      userId,
+    },
+  });
 
+  const doctorCount = await Doctor.count({
+    where: {
+      userId,
+    },
+  });
 
-
-  const medicineCount =
-    await Medicine.countDocuments({
-      user:userId,
-    });
-
-
-
-  const doctorCount =
-    await Doctor.countDocuments({
-      user:userId,
-    });
-
-
-
-  const prescriptionCount =
-    await Prescription.countDocuments({
-      user:userId,
-    });
-
-
-
+  const prescriptionCount = await Prescription.count({
+    where: {
+      userId,
+    },
+  });
 
   const healthData = {
-
-
     bloodPressure: latestBP
       ? {
           high: latestBP.High,
@@ -76,16 +73,12 @@ export async function getDashboardData(userId) {
         }
       : null,
 
-
-
     diabetes: latestDiabetes
       ? {
           glucose: latestDiabetes.glucose,
           date: latestDiabetes.createdAt,
         }
       : null,
-
-
 
     bmi: latestBMI
       ? {
@@ -95,76 +88,30 @@ export async function getDashboardData(userId) {
         }
       : null,
 
-
-
     profile: profile || null,
-
-
   };
-
-
-
 
   const healthSummary =
     generateHealthSummary(healthData);
 
-
-
-
   return {
-
-
     user: {
-
-      name: profile?.user?.name || "User",
-
-      email: profile?.user?.email || "",
-
+      name: profile?.User?.name || "User",
+      email: profile?.User?.email || "",
     },
-
-
 
     health: {
-
-
-      bloodPressure:
-        healthData.bloodPressure,
-
-
-
-      diabetes:
-        healthData.diabetes,
-
-
-
-      bmi:
-        healthData.bmi,
-
-
+      bloodPressure: healthData.bloodPressure,
+      diabetes: healthData.diabetes,
+      bmi: healthData.bmi,
     },
-
-
 
     healthSummary,
 
-
-
-    summary:{
-
-
+    summary: {
       medicines: medicineCount,
-
-
       doctors: doctorCount,
-
-
       prescriptions: prescriptionCount,
-
-
     },
-
-
   };
-
-
 }

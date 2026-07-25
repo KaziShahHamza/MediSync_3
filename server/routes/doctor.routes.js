@@ -1,16 +1,20 @@
-// server/routes/doctor.routes.js
 import express from "express";
 import Doctor from "../models/Doctor.js";
 import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Get all doctors
+/*
+Get doctors
+*/
 router.get("/", auth, async (req, res) => {
   try {
-    const doctors = await Doctor.find({
-      user: req.userId,
-    }).sort({ createdAt: -1 });
+    const doctors = await Doctor.findAll({
+      where: {
+        userId: req.userId,
+      },
+      order: [["createdAt", "DESC"]],
+    });
 
     res.json(doctors);
   } catch {
@@ -20,12 +24,14 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// Add doctor
+/*
+Create doctor
+*/
 router.post("/", auth, async (req, res) => {
   try {
     const doctor = await Doctor.create({
       ...req.body,
-      user: req.userId,
+      userId: req.userId,
     });
 
     res.status(201).json(doctor);
@@ -36,25 +42,25 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-// Update doctor
+/*
+Update doctor
+*/
 router.put("/:id", auth, async (req, res) => {
   try {
-    const doctor = await Doctor.findOneAndUpdate(
-      {
-        _id: req.params.id,
-        user: req.userId,
+    const doctor = await Doctor.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.userId,
       },
-      req.body,
-      {
-        new: true,
-      }
-    );
+    });
 
     if (!doctor) {
       return res.status(404).json({
         message: "Doctor not found",
       });
     }
+
+    await doctor.update(req.body);
 
     res.json(doctor);
   } catch {
@@ -64,13 +70,25 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
-// Delete doctor
+/*
+Delete doctor
+*/
 router.delete("/:id", auth, async (req, res) => {
   try {
-    await Doctor.findOneAndDelete({
-      _id: req.params.id,
-      user: req.userId,
+    const doctor = await Doctor.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.userId,
+      },
     });
+
+    if (!doctor) {
+      return res.status(404).json({
+        message: "Doctor not found",
+      });
+    }
+
+    await doctor.destroy();
 
     res.json({
       success: true,
