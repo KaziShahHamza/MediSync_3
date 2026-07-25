@@ -41,7 +41,9 @@ async function startServer() {
       converted to Sequelize.
     */
 
-    // await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: true });
+
+    console.log("Database synchronized.");
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);

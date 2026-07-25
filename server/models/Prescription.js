@@ -1,27 +1,33 @@
-// server/models/Prescription.js
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
 
-const prescriptionSchema = new mongoose.Schema(
+const Prescription = sequelize.define(
+  "Prescription",
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
 
     title: {
-      type: String,
-      required: true,
-      trim: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
 
     imageUrl: {
-      type: String,
-      required: true,
-      trim: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-export default mongoose.model("Prescription", prescriptionSchema);
+export default Prescription;

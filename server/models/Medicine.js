@@ -1,33 +1,38 @@
-// server/models/Medicine.js
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
 
-const medicineSchema = new mongoose.Schema(
+const Medicine = sequelize.define(
+  "Medicine",
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
 
     name: {
-      type: String,
-      required: true,
-      trim: true
+      type: DataTypes.STRING,
+      allowNull: false,
     },
 
     dosageTimes: {
-      type: [String],
-      enum: ["morning", "noon", "night"],
-      default: []
+      type: DataTypes.JSON,
+      defaultValue: [],
     },
 
     imageUrl: {
-      type: String,
-      trim: true,
-      default: ""
-    }
+      type: DataTypes.STRING,
+      defaultValue: "",
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-export default mongoose.model("Medicine", medicineSchema);
+export default Medicine;

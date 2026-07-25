@@ -1,86 +1,87 @@
-// server/models/Profile.js
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
 
-const profileSchema = new mongoose.Schema(
+const Profile = sequelize.define(
+  "Profile",
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
       unique: true,
     },
 
-    dob: Date,
+    dob: DataTypes.DATE,
 
     gender: {
-      type: String,
-      enum: ["Male", "Female", "Other"],
-      default: "",
+      type: DataTypes.ENUM("Male", "Female", "Other"),
+      defaultValue: "",
     },
 
     height: {
-      feet: {
-        type: Number,
-        default: null,
-      },
-      inches: {
-        type: Number,
-        default: null,
-      },
+      type: DataTypes.JSON,
+      allowNull: true,
     },
 
     bloodGroup: {
-      type: String,
-      default: "",
+      type: DataTypes.STRING,
+      defaultValue: "",
     },
 
     allergies: {
-      type: String,
-      default: "",
+      type: DataTypes.TEXT,
+      defaultValue: "",
     },
 
     chronicIllnesses: {
-      type: [String],
-      default: [],
+      type: DataTypes.JSON,
+      defaultValue: [],
     },
 
     surgeries: {
-      type: String,
-      default: "",
+      type: DataTypes.TEXT,
+      defaultValue: "",
     },
 
     smoking: {
-      type: String,
-      enum: ["Never", "Former", "Current"],
-      default: "",
+      type: DataTypes.ENUM("Never", "Former", "Current"),
+      defaultValue: "",
     },
 
     alcohol: {
-      type: String,
-      enum: ["Never", "Occasionally", "Frequently"],
-      default: "",
+      type: DataTypes.ENUM("Never", "Occasionally", "Frequently"),
+      defaultValue: "",
     },
 
     exercise: {
-      type: String,
-      enum: ["Never", "1-2 Days", "3-5 Days", "Daily"],
-      default: "",
+      type: DataTypes.ENUM(
+        "Never",
+        "1-2 Days",
+        "3-5 Days",
+        "Daily"
+      ),
+      defaultValue: "",
     },
 
     diet: {
-      type: String,
-      enum: ["Mixed", "Vegetarian", "Vegan"],
-      default: "",
+      type: DataTypes.ENUM(
+        "Mixed",
+        "Vegetarian",
+        "Vegan"
+      ),
+      defaultValue: "",
     },
 
     emergencyContact: {
-      name: {
-        type: String,
-        default: "",
-      },
-      phone: {
-        type: String,
-        default: "",
+      type: DataTypes.JSON,
+      defaultValue: {
+        name: "",
+        phone: "",
       },
     },
   },
@@ -89,4 +90,4 @@ const profileSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Profile", profileSchema);
+export default Profile;

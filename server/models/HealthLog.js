@@ -1,40 +1,46 @@
-// server/models/HealthLog.js
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
 
-const healthLogSchema = new mongoose.Schema(
+const HealthLog = sequelize.define(
+  "HealthLog",
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
 
     type: {
-      type: String,
-      enum: ["bp", "diabetes", "bmi"],
-      required: true,
+      type: DataTypes.ENUM(
+        "bp",
+        "diabetes",
+        "bmi"
+      ),
+      allowNull: false,
     },
 
-    // Blood Pressure
-    High: Number,
-    Low: Number,
+    High: DataTypes.FLOAT,
 
-    // Blood Sugar
-    glucose: Number,
+    Low: DataTypes.FLOAT,
 
-    // BMI
-    height: Number,
-    weight: Number,
-    bmi: Number,
+    glucose: DataTypes.FLOAT,
 
-    note: String,
+    height: DataTypes.FLOAT,
 
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+    weight: DataTypes.FLOAT,
+
+    bmi: DataTypes.FLOAT,
+
+    note: DataTypes.TEXT,
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-export default mongoose.model("HealthLog", healthLogSchema);
+export default HealthLog;

@@ -1,64 +1,63 @@
-// server/models/Doctor.js
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
 
-const doctorSchema = new mongoose.Schema(
+const Doctor = sequelize.define(
+  "Doctor",
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
 
     name: {
-      type: String,
-      required: true,
-      trim: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
 
     specialty: {
-      type: String,
-      required: true,
-      trim: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
 
     designation: {
-        type: String,
-        default: "",
+      type: DataTypes.STRING,
+      defaultValue: "",
     },
 
     hospital: {
-      type: String,
-      default: "",
-      trim: true,
+      type: DataTypes.STRING,
+      defaultValue: "",
     },
 
     chamber: {
-      type: String,
-      default: "",
-      trim: true,
+      type: DataTypes.STRING,
+      defaultValue: "",
     },
 
     visitingDays: {
-      type: String,
-      default: "",
-    },
-
-    visitingDays: {
-    type: [String],
-    default: [],
+      type: DataTypes.JSON,
+      defaultValue: [],
     },
 
     phone: {
-      type: String,
-      default: "",
+      type: DataTypes.STRING,
+      defaultValue: "",
     },
 
     notes: {
-      type: String,
-      default: "",
+      type: DataTypes.TEXT,
+      defaultValue: "",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-export default mongoose.model("Doctor", doctorSchema);
+export default Doctor;

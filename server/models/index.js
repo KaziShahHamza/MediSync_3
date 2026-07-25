@@ -7,16 +7,6 @@ import HealthLog from "./HealthLog.js";
 import Doctor from "./Doctor.js";
 import Prescription from "./Prescription.js";
 
-/*
-|--------------------------------------------------------------------------
-| Associations
-|--------------------------------------------------------------------------
-|
-| These associations will work after all models are converted to Sequelize
-| in Prompt 2.
-|
-*/
-
 User.hasOne(Profile, {
   foreignKey: "userId",
   onDelete: "CASCADE",
