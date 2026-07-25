@@ -20,7 +20,7 @@ const Profile = sequelize.define(
 
     gender: {
       type: DataTypes.ENUM("Male", "Female", "Other"),
-      defaultValue: "",
+      allowNull: true,
     },
 
     height: {
@@ -50,12 +50,12 @@ const Profile = sequelize.define(
 
     smoking: {
       type: DataTypes.ENUM("Never", "Former", "Current"),
-      defaultValue: "",
+      allowNull: true,
     },
 
     alcohol: {
       type: DataTypes.ENUM("Never", "Occasionally", "Frequently"),
-      defaultValue: "",
+      allowNull: true,
     },
 
     exercise: {
@@ -65,7 +65,7 @@ const Profile = sequelize.define(
         "3-5 Days",
         "Daily"
       ),
-      defaultValue: "",
+      allowNull: true,
     },
 
     diet: {
@@ -74,7 +74,7 @@ const Profile = sequelize.define(
         "Vegetarian",
         "Vegan"
       ),
-      defaultValue: "",
+      allowNull: true,
     },
 
     emergencyContact: {
