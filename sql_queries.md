@@ -1,5 +1,8 @@
 
-প্রথমে database select করো:
+
+```sql
+CREATE DATABASE company_db;
+```
 
 ```sql
 USE medisync;

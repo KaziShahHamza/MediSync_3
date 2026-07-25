@@ -15,26 +15,17 @@ const UPLOAD_PRESET = "new_preset";
 
 
 export default function Prescriptions() {
-
-
   const {
     prescriptions,
     fetchPrescriptions,
   } = usePrescriptions();
-
-
 
   const [title, setTitle] = useState("");
   const [file, setFile] = useState(null);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
 
-
-
-
-
   async function handleUpload() {
-
 
     if (!title || !file) {
 
@@ -44,19 +35,13 @@ export default function Prescriptions() {
 
     }
 
-
-
     setLoading(true);
-
-
 
     try {
 
 
       const formData = new FormData();
-
       formData.append("file", file);
-
       formData.append(
         "upload_preset",
         UPLOAD_PRESET
@@ -65,110 +50,52 @@ export default function Prescriptions() {
 
 
       const uploadRes = await fetch(
-
         `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-
         {
-
           method:"POST",
-
           body:formData,
-
         }
-
       );
-
-
 
       const uploadData = await uploadRes.json();
 
-
-
-
       const token = localStorage.getItem("token");
 
-
-
       await fetch(
-
         "http://localhost:5000/api/prescriptions",
-
         {
-
           method:"POST",
-
           headers:{
-
             "Content-Type":"application/json",
-
             Authorization:`Bearer ${token}`,
-
           },
 
-
           body:JSON.stringify({
-
             title,
-
             imageUrl:uploadData.secure_url,
-
           }),
-
-
         }
-
       );
 
-
-
-
       setTitle("");
-
       setFile(null);
-
-
       fetchPrescriptions();
 
-
-
     } catch(err) {
-
-
       console.error(err);
-
       alert("Upload failed.");
-
-
     }
-
-
-
     setLoading(false);
-
 
   }
 
-
-
-
-
-
   async function deletePrescription(id) {
-
-
     if(!window.confirm("Delete prescription?"))
-
       return;
-
-
-
 
     const token = localStorage.getItem("token");
 
-
-
     await fetch(
-
       `http://localhost:5000/api/prescriptions/${id}`,
 
       {
@@ -192,60 +119,28 @@ export default function Prescriptions() {
 
   }
 
-
-
-
-
   return (
-
     <div className="container py-10">
 
-
-
       {/* Header */}
-
-
       <div className="mb-10">
-
-
         <h1 className="page-title">
-
           Prescriptions
-
         </h1>
 
-
         <p className="subtitle mt-2">
-
           Store and manage your medical prescriptions securely.
-
         </p>
 
-
       </div>
-
-
-
-
-
-
-
       <div className="
         grid
         lg:grid-cols-[1.7fr_0.8fr]
         gap-8
         items-start
       ">
-
-
-
         {/* Gallery */}
-
-
-
         <section>
-
-
           <div className="
             flex
             justify-between
@@ -360,38 +255,18 @@ export default function Prescriptions() {
 
                 </h3>
 
-
-
                 <p className="
                   mt-2
                   text-sm
                   text-slate-500
                 ">
-
                   Upload your first prescription to keep records organized.
-
                 </p>
-
-
               </div>
-
-
             )
           }
-
-
-
         </section>
-
-
-
-
-
-
         {/* Upload */}
-
-
-
         <aside className="
           card
           sticky
@@ -413,41 +288,21 @@ export default function Prescriptions() {
               p-3
               text-blue-600
             ">
-
-
               <Upload size={22}/>
-
-
             </div>
-
 
 
             <div>
-
-
               <h2 className="card-title">
-
                 Upload Prescription
-
               </h2>
 
-
               <p className="text-sm text-slate-500">
-
                 Add a new medical record
-
               </p>
-
-
             </div>
-
-
-
           </div>
-
                     <div className="space-y-5">
-
-
             <div>
 
               <label>
@@ -456,37 +311,19 @@ export default function Prescriptions() {
 
 
               <input
-
                 type="text"
-
                 placeholder="Example: Blood Test Prescription"
-
                 value={title}
-
                 onChange={(e)=>setTitle(e.target.value)}
-
                 className="input"
-
               />
 
             </div>
 
-
-
-
-
-
-
             <div>
-
-
               <label>
-
                 Prescription Image
-
               </label>
-
-
 
               <label className="
                 flex
@@ -507,20 +344,13 @@ export default function Prescriptions() {
 
 
                 <ImageIcon
-
                   size={20}
-
                   className="text-blue-600"
-
                 />
-
-
-
                 <span className="
                   text-sm
                   text-slate-600
                 ">
-
                   {file
                     ? file.name
                     : "Choose prescription image"
@@ -528,16 +358,10 @@ export default function Prescriptions() {
 
                 </span>
 
-
-
                 <input
-
                   type="file"
-
                   accept="image/png,image/jpeg"
-
                   className="hidden"
-
                   onChange={(e)=>
                     setFile(e.target.files[0])
                   }
@@ -547,28 +371,15 @@ export default function Prescriptions() {
 
               </label>
 
-
-
             </div>
 
-
-
-
-
-
-
             <button
-
               onClick={handleUpload}
-
               className="
                 btn-primary
                 w-full
               "
-
             >
-
-
               <Upload size={18}/>
 
 
@@ -592,23 +403,11 @@ export default function Prescriptions() {
 
       </div>
 
-
-
-
-
-
-
-
       {/* Preview Modal */}
-
-
 
       {
         selected && (
-
-
           <div
-
             className="
               fixed
               inset-0
@@ -619,16 +418,10 @@ export default function Prescriptions() {
               z-50
               p-5
             "
-
-
             onClick={() => setSelected(null)}
 
           >
-
-
-
             <div
-
               className="
               bg-white/30
               backdrop-blur-sm
@@ -637,14 +430,8 @@ export default function Prescriptions() {
               w-full
               p-6
             "
-
-
               onClick={(e)=>e.stopPropagation()}
-
             >
-
-
-
 
               <div className="
                 flex
@@ -652,45 +439,24 @@ export default function Prescriptions() {
                 items-center
                 mb-5
               ">
-
-
-
                 <div>
-
-
                   <h2 className="
                     text-xl
                     font-semibold
                     text-slate-900
                   ">
-
-
                     {selected.title}
-
-
                   </h2>
-
-
                   <p className="
                     text-sm
                     text-slate-100
                     mt-1
                   ">
-
-
                     {new Date(
                       selected.createdAt
                     ).toLocaleDateString()}
-
-
                   </p>
-
-
                 </div>
-
-
-
-
 
                 <button
 
@@ -705,21 +471,10 @@ export default function Prescriptions() {
                   "
 
                 >
-
                   <X size={22}/>
-
-
                 </button>
 
-
-
-
               </div>
-
-
-
-
-
 
               <div className="
                 flex
@@ -728,8 +483,6 @@ export default function Prescriptions() {
                 rounded-xl
                 p-4
               ">
-
-
 
                 <img
 
@@ -744,28 +497,13 @@ export default function Prescriptions() {
                   "
 
                 />
-
-
               </div>
-
-
-
-
             </div>
 
-
-
           </div>
-
-
         )
       }
 
-
-
     </div>
-
   );
-
-
 }
